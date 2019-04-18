@@ -15,18 +15,25 @@ on Kong or on custom plugins.
 
 # Table of contents
 
-* [Try Kong](#try-kong)
-* [Development environment](#development-environment)
-  * [Preparing the development environment](#preparing-the-development-environment)
-  * [Running Kong from the source repo](#running-kong-from-the-source-repo)
-  * [Testing Kong and custom plugins](#testing-kong-and-custom-plugins)
-  * [Log files](#log-files)
-  * [Development tips and tricks](#development-tips-and-tricks)
-  * [Utilities and profiling](#utilities-and-profiling)
-* [Environment variables and configuration](#environment-variables-and-configuration)
-  * [Exposed ports](#exposed-ports)
-* [Known issues](#known-issues)
-* [Enterprise support](#enterprise-support)
+- [[Kong][website-url] :heavy_plus_sign: Vagrant](#kongwebsite-url-heavyplussign-vagrant)
+- [Table of contents](#table-of-contents)
+  - [Try Kong](#try-kong)
+  - [Development environment](#development-environment)
+    - [Preparing the development environment](#preparing-the-development-environment)
+    - [Running Kong from the source repo](#running-kong-from-the-source-repo)
+    - [Testing Kong and custom plugins](#testing-kong-and-custom-plugins)
+    - [Log files](#log-files)
+    - [Development tips and tricks](#development-tips-and-tricks)
+    - [Utilities and profiling](#utilities-and-profiling)
+  - [Environment variables and configuration](#environment-variables-and-configuration)
+    - [Exposed ports](#exposed-ports)
+  - [Known issues](#known-issues)
+    - [Postgres connection refused](#postgres-connection-refused)
+    - [Windows](#windows)
+    - [Incompatible versions error](#incompatible-versions-error)
+    - [worker_connections are not enough error](#workerconnections-are-not-enough-error)
+    - [Vagrant error; The box 'ubuntu/bionic64' could not be found](#vagrant-error-the-box-ubuntubionic64-could-not-be-found)
+  - [Enterprise Support](#enterprise-support)
 
 **WINDOWS USERS**: Please check the [known issues](#known-issues)
 
@@ -66,7 +73,7 @@ To verify Kong is running successfully, execute the following command (from
 the host machine):
 
 ```shell
-$ curl http://localhost:8001
+$ curl http://localhost:9091
 ```
 
 You should receive a JSON response:
@@ -146,7 +153,7 @@ To verify Kong has loaded the plugin successfully, execute the following
 command from the host machine:
 
 ```shell
-$ curl http://localhost:8001
+$ curl http://localhost:9091
 ```
 In the response you get, the plugins list should now contain an entry
 "myplugin" to indicate the plugin was loaded.
@@ -157,17 +164,17 @@ To start using the plugin, execute from the host:
 # 'catch-all' setup with the `uris` field set to '/'
 # NOTE: for pre-0.10 versions 'uris=' below should be 'request_path='
 $ curl -i -X POST \
-  --url http://localhost:8001/services/ \
+  --url http://localhost:9091/services/ \
   --data 'name=mockbin' \
   --data 'url=http://mockbin.org/request'
 
 $ curl -i -X POST \
-  --url http://localhost:8001/services/mockbin/routes \
+  --url http://localhost:9091/services/mockbin/routes \
   --data 'paths=/'
 
 # add the custom plugin, to our new api
 $ curl -i -X POST \
-  --url http://localhost:8001/services/mockbin/plugins \
+  --url http://localhost:9091/services/mockbin/plugins \
   --data 'name=myplugin'
 ```
 
@@ -177,20 +184,20 @@ If you are using an older version of Kong follow the instructions below instead:
 # 'catch-all' setup with the `uris` field set to '/'
 # NOTE: for pre-0.10 versions 'uris=' below should be 'request_path='
 $ curl -i -X POST \
-  --url http://localhost:8001/apis/ \
+  --url http://localhost:9091/apis/ \
   --data 'name=mockbin' \
   --data 'upstream_url=http://mockbin.org/request' \
   --data 'uris=/'
 
 # add the custom plugin, to our new api
 $ curl -i -X POST \
-  --url http://localhost:8001/apis/mockbin/plugins \
+  --url http://localhost:9091/apis/mockbin/plugins \
   --data 'name=myplugin'
 ```
 
 Check whether it is working by making a request from the host:
 ```shell
-$ curl -i http://localhost:8000
+$ curl -i http://localhost:9090
 ```
 
 The response you get should be an echo (by Mockbin) of the request. But in the
@@ -377,11 +384,11 @@ or if you prefer all repos on the same level:
 
 The (non-configurable) exposed ports are;
 
-- `8000` HTTP Proxy port
-- `8443` HTTPS Proxy port
-- `8001` Admin API
-- `8444` SSL Admin API
-- `9000` TCP Proxy port (both TLS and non-TLS) (only available with Kong >= 0.15.0)
+- `9090` HTTP Proxy port
+- `9443` HTTPS Proxy port
+- `9091` Admin API
+- `9444` SSL Admin API
+- `9111` TCP Proxy port (both TLS and non-TLS) (only available with Kong >= 0.15.0)
 - `65432` Postgres datastore
 
 These are mapped 1-on-1 between the host and guest.

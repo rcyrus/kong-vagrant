@@ -36,8 +36,8 @@ POSTGRES_VERSION=9.6
 
 # Set some version dependent options
 KONG_DOWNLOAD_URL="https://github.com/Kong/kong/releases/download/$KONG_VERSION/kong-$KONG_VERSION.precise_all.deb"
-KONG_ADMIN_LISTEN="0.0.0.0:8001"
-KONG_ADMIN_LISTEN_SSL="0.0.0.0:8444"
+KONG_ADMIN_LISTEN="0.0.0.0:9091"
+KONG_ADMIN_LISTEN_SSL="0.0.0.0:9444"
 
 if [ $KONG_NUM_VERSION -gt 001003 ]; then
   KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-community-edition-deb/download_file?file_path=dists%2Fkong-community-edition-${KONG_VERSION}.trusty.all.deb"
@@ -45,7 +45,7 @@ fi
 
 if [ $KONG_NUM_VERSION -ge 001300 ]; then
   # Kong 0.13.0 listen directives format changed, now combined
-  KONG_ADMIN_LISTEN="0.0.0.0:8001, 0.0.0.0:8444 ssl"
+  KONG_ADMIN_LISTEN="0.0.0.0:9091, 0.0.0.0:9444 ssl"
   unset KONG_ADMIN_LISTEN_SSL
 fi
 
@@ -54,10 +54,10 @@ if [ $KONG_NUM_VERSION -ge 001500 ]; then
   KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-community-edition-deb/download_file?file_path=dists%2Fkong-community-edition-${KONG_VERSION}.bionic.all.deb"
 
   # Let's enable transparent listening option as well
-  KONG_PROXY_LISTEN="0.0.0.0:8000 transparent, 0.0.0.0:8443 transparent ssl"
+  KONG_PROXY_LISTEN="0.0.0.0:9090 transparent, 0.0.0.0:9443 transparent ssl"
 
   # Kong 0.15.0 has a stream module, let's enable that too
-  KONG_STREAM_LISTEN="0.0.0.0:9000 transparent"
+  KONG_STREAM_LISTEN="0.0.0.0:9111 transparent"
 fi
 
 sudo chown -R vagrant /usr/local
@@ -177,11 +177,7 @@ set +o errexit
 java -version  > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "Installing Java"
-  echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo -E debconf-set-selections
-  echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 seen true" | sudo -E debconf-set-selections
-  sudo -E add-apt-repository ppa:webupd8team/java
-  sudo -E apt-get update -qq
-  sudo -E apt-get install -qq oracle-java8-installer
+  sudo -E apt-get install -qq openjdk-8-jdk
 fi
 
 dpkg -f noninteractive --list cassandra > /dev/null 2>&1

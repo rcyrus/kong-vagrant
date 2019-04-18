@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if ENV["KONG_VERSION"]
     version = ENV["KONG_VERSION"]
   else
-    version = "1.1.0"
+    version = "1.1.1"
   end
 
   if ENV["KONG_CASSANDRA"]
@@ -96,11 +96,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder plugin_source, "/kong-plugin"
   end
 
-  config.vm.network :forwarded_port, guest: 8000, host: 8000
-  config.vm.network :forwarded_port, guest: 8001, host: 8001
-  config.vm.network :forwarded_port, guest: 8443, host: 8443
-  config.vm.network :forwarded_port, guest: 8444, host: 8444
-  config.vm.network :forwarded_port, guest: 9000, host: 9000 # only used with TCP stream proxy with Kong >= 0.15.0
+  config.vm.network :forwarded_port, guest: 9090, host: 9090
+  config.vm.network :forwarded_port, guest: 9091, host: 9091
+  config.vm.network :forwarded_port, guest: 9443, host: 9443
+  config.vm.network :forwarded_port, guest: 9444, host: 9444
+  config.vm.network :forwarded_port, guest: 9111, host: 9111 # only used with TCP stream proxy with Kong >= 0.15.0
   config.vm.network :forwarded_port, guest: 5432, host: 65432
 
   config.vm.provision "shell", path: "provision.sh",
